@@ -18,7 +18,7 @@ MONGO_URI=mongodb://127.0.0.1:27017/tododb
 # OR MongoDB Atlas (free):
 MONGO_URI=mongodb+srv://USER:PASS@cluster0.xxxxx.mongodb.net/tododb
 ```
-
+ccc
 ### Step 3 — Start Backend (Terminal 1)
 ```bash
 cd backend
