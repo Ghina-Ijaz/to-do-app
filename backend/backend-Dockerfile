@@ -1,0 +1,18 @@
+# Use official Node.js LTS
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package*.json ./
+RUN npm install --production
+
+# Copy all source code
+COPY . .
+
+# Expose backend port (matches config.env PORT=4000)
+EXPOSE 4000
+
+# Start the server
+CMD ["node", "server.js"]

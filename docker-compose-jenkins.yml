@@ -1,0 +1,60 @@
+version: "3.8"
+
+# Part II — Jenkins Pipeline docker-compose
+# Key differences from Part I:
+#   - Source code mounted as volumes (no Dockerfile used)
+#   - Different container names: jenkins_*
+#   - Different ports: backend 4001, frontend 8082
+#   - Started by Jenkins on GitHub push; initially DOWN
+
+services:
+
+  mongo:
+    image: mongo:6
+    container_name: jenkins_mongo
+    restart: always
+    volumes:
+      - jenkins_mongo_data:/data/db
+    networks:
+      - jenkins_network
+
+  backend:
+    image: node:20-alpine
+    container_name: jenkins_backend
+    working_dir: /app
+    command: sh -c "npm install && node server.js"
+    environment:
+      PORT: 4001
+      NODE_ENV: development
+      MONGO_URI: mongodb://jenkins_mongo:27017/tododb
+      JWT_SECRET: a3f8c2e1d4b7a9f0e2c5d8b1a4f7c0e3d6b9a2f5c8e1d4b7a0f3c6e9d2b5a8f1
+      JWT_EXPIRE: 7d
+    ports:
+      - "4001:4001"
+    volumes:
+      - ./backend:/app             # mount source code — no Dockerfile needed
+    depends_on:
+      - mongo
+    networks:
+      - jenkins_network
+
+  frontend:
+    image: node:20-alpine
+    container_name: jenkins_frontend
+    working_dir: /app
+    command: sh -c "npm install && npm run dev -- --host"
+    ports:
+      - "8082:5173"
+    volumes:
+      - ./frontend:/app            # mount source code — no Dockerfile needed
+    depends_on:
+      - backend
+    networks:
+      - jenkins_network
+
+volumes:
+  jenkins_mongo_data:
+
+networks:
+  jenkins_network:
+    driver: bridge
