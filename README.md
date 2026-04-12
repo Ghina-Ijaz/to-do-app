@@ -11,7 +11,7 @@ cd ../frontend  &&  npm install
 ### Step 2 — Configure MongoDB
 Open `backend/config/config.env` and set your MongoDB URI:
 
-```
+``
 # Local MongoDB:
 MONGO_URI=mongodb://127.0.0.1:27017/tododb
 
